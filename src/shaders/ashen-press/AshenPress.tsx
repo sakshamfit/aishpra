@@ -1,0 +1,421 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom/client";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { gsap } from "gsap";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import "./threeui.css";
+
+// Art plates and colophon marks as data URIs (same as in HTML version)
+const PLATE_SRC = [
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EASHEN%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EPRESS%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EI%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EII%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EIII%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EIV%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EV%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVI%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVII%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVIII%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='248'%20height='350'%3E%3Crect%20width='248'%20height='350'%20fill='%23000'/%3E%3Cpath%20d='M124,20C62,20,12,62,12,124s50,104,104,104,104-50,104-104S186,20,124,20z'%20stroke='%23fff'%20stroke-width='2'/%3E%3Ctext%20x='124'%20y='100'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EVOL%3C/text%3E%3Ctext%20x='124'%20y='140'%20text-anchor='middle'%20fill='%23fff'%20font-size='24'%3EIX%3C/text%3E%3C/svg%3E"
+];
+const MARK_SRC = [
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E1%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E2%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E3%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E4%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E5%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E6%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E7%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E8%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E9%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%3E%3Crect%20width='64'%20height='64'%20fill='%23000'/%3E%3Ctext%20x='32'%20y='36'%20text-anchor='middle'%20fill='%23fff'%20font-size='20'%3E10%3C/text%3E%3C/svg%3E"
+];
+
+interface AshenPressProps {
+  // No props needed for this exact implementation
+}
+
+export function AshenPress() {
+  React.useEffect(() => {
+    const rootDiv = document.createElement("div");
+    document.body.appendChild(rootDiv);
+
+    const root = ReactDOM.createRoot(rootDiv);
+
+    class AshenPressInstance {
+      scene: THREE.Scene;
+      camera: THREE.PerspectiveCamera;
+      renderer: THREE.WebGLRenderer;
+      labelRenderer: CSS2DRenderer;
+      controls: OrbitControls;
+      books: THREE.Group[];
+      shelf: THREE.Mesh | null;
+      tornPaper: THREE.Mesh | null;
+      raycaster: THREE.Raycaster;
+      mouse: THREE.Vector2;
+      selectedBook: THREE.Group | null;
+      isDragging: boolean;
+      previousIntersected: THREE.Group | null;
+
+      constructor() {
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x000000);
+
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        this.camera.position.set(0, 1.5, 3.5);
+
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        rootDiv.appendChild(this.renderer.domElement);
+
+        this.labelRenderer = new CSS2DRenderer();
+        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        this.labelRenderer.domElement.style.position = 'absolute';
+        this.labelRenderer.domElement.style.top = '0';
+        rootDiv.appendChild(this.labelRenderer.domElement);
+
+        this.controls = new OrbitControls(this.camera, this.labelRenderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.enablePan = false;
+        this.controls.minDistance = 2;
+        this.controls.maxDistance = 5;
+        this.controls.target.set(0, 1, 0);
+
+        this.books = [];
+        this.shelf = null;
+        this.tornPaper = null;
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+        this.selectedBook = null;
+        this.isDragging = false;
+        this.previousIntersected = null;
+
+        this.init();
+        this.animate();
+
+        window.addEventListener('resize', this.onWindowResize.bind(this));
+        window.addEventListener('pointerdown', this.onPointerDown.bind(this));
+        window.addEventListener('pointerup', this.onPointerUp.bind(this));
+        window.addEventListener('pointermove', this.onPointerMove.bind(this));
+        window.addEventListener('wheel', this.onWheel.bind(this));
+        document.addEventListener('keydown', this.onKeyDown.bind(this));
+      }
+
+      init() {
+        this.createLights();
+        this.createShelf();
+        this.createBooks();
+        this.createTornPaper();
+      }
+
+      createLights() {
+        const ambient = new THREE.AmbientLight(0x404040, 2);
+        this.scene.add(ambient);
+
+        const directional = new THREE.DirectionalLight(0xffffff, 3);
+        directional.position.set(5, 10, 7);
+        directional.castShadow = true;
+        directional.shadow.mapSize.width = 2048;
+        directional.shadow.mapSize.height = 2048;
+        this.scene.add(directional);
+      }
+
+      createShelf() {
+        const shelfGeometry = new THREE.BoxGeometry(12, 0.5, 2);
+        const shelfMaterial = new THREE.MeshStandardMaterial({
+          color: 0x8b4513,
+          metalness: 0.1,
+          roughness: 0.8
+        });
+        this.shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
+        this.shelf.position.y = 0;
+        this.shelf.receiveShadow = true;
+        this.scene.add(this.shelf);
+      }
+
+      createBooks() {
+        const bookWidth = 1.0;
+        const bookHeight = 1.6;
+        const bookDepth = 0.25;
+        const spacing = 0.1;
+        const startX = -(9 * (bookWidth + spacing)) / 2;
+
+        for (let i = 0; i < 10; i++) {
+          const bookGroup = new THREE.Group();
+
+          const bookGeometry = new THREE.BoxGeometry(bookWidth, bookHeight, bookDepth);
+          const clothTexture = this.createClothTexture();
+          const bookMaterial = new THREE.MeshStandardMaterial({
+            map: clothTexture,
+            metalness: 0.0,
+            roughness: 0.9
+          });
+          const bookMesh = new THREE.Mesh(bookGeometry, bookMaterial);
+          bookMesh.castShadow = true;
+          bookMesh.receiveShadow = true;
+          bookGroup.add(bookMesh);
+
+          const plateGeometry = new THREE.PlaneGeometry(0.8, 1.1);
+          const plateTexture = new THREE.TextureLoader().load(PLATE_SRC[i]);
+          const plateMaterial = new THREE.MeshBasicMaterial({
+            map: plateTexture,
+            transparent: true
+          });
+          const plateMesh = new THREE.Mesh(plateGeometry, plateMaterial);
+          plateMesh.position.z = bookDepth/2 + 0.01;
+          bookGroup.add(plateMesh);
+
+          const markGeometry = new THREE.PlaneGeometry(0.2, 0.2);
+          const markTexture = new THREE.TextureLoader().load(MARK_SRC[i]);
+          const markMaterial = new THREE.MeshBasicMaterial({
+            map: markTexture,
+            transparent: true
+          });
+          const markMesh = new THREE.Mesh(markGeometry, markMaterial);
+          markMesh.position.set(-bookWidth/2 + 0.1, bookHeight/2 - 0.1, bookDepth/2 + 0.02);
+          bookGroup.add(markMesh);
+
+          bookGroup.position.set(startX + i * (bookWidth + spacing), bookHeight/2, 0);
+          bookGroup.userData.index = i;
+          bookGroup.userData.originalRotation = bookGroup.rotation.clone();
+          bookGroup.userData.originalPosition = bookGroup.position.clone();
+
+          this.scene.add(bookGroup);
+          this.books.push(bookGroup);
+        }
+      }
+
+      createClothTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#8b0000';
+        ctx.fillRect(0, 0, 64, 64);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 0.5;
+
+        for (let y = 0; y < 64; y += 4) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(64, y);
+          ctx.stroke();
+        }
+
+        for (let x = 0; x < 64; x += 4) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, 64);
+          ctx.stroke();
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(4, 4);
+        return texture;
+      }
+
+      createTornPaper() {
+        const paperGeometry = new THREE.PlaneGeometry(3, 2);
+        const paperMaterial = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.8
+        });
+        this.tornPaper = new THREE.Mesh(paperGeometry, paperMaterial);
+        this.tornPaper.position.set(0, 1.8, 0.26);
+        this.tornPaper.rotation.y = Math.PI * 0.1;
+        this.scene.add(this.tornPaper);
+      }
+
+      onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      onPointerDown(event: PointerEvent) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.books.map(b => b.children[0]));
+
+        if (intersects.length > 0) {
+          const intersected = intersects[0].object.parent;
+          this.selectedBook = intersected;
+          this.isDragging = true;
+
+          gsap.to(intersected.rotation, {
+            y: intersected.rotation.y + Math.PI * 0.5,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+      }
+
+      onPointerUp() {
+        if (this.selectedBook && this.isDragging) {
+          gsap.to(this.selectedBook.rotation, {
+            y: this.selectedBook.userData.originalRotation.y,
+            duration: 0.8,
+            ease: "elastic.out(1, 0.3)"
+          });
+
+          gsap.to(this.selectedBook.position, {
+            y: this.selectedBook.userData.originalPosition.y,
+            duration: 0.8,
+            ease: "elastic.out(1, 0.3)"
+          });
+
+          this.selectedBook = null;
+          this.isDragging = false;
+        }
+      }
+
+      onPointerMove(event: PointerEvent) {
+        if (this.isDragging && this.selectedBook) {
+          const rect = this.renderer.domElement.getBoundingClientRect();
+          this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+          this.raycaster.setFromCamera(this.mouse, this.camera);
+          const intersects = this.raycaster.intersectObject(this.shelf);
+
+          if (intersects.length > 0) {
+            const point = intersects[0].point;
+            this.selectedBook.position.x = point.x;
+            this.selectedBook.position.z = point.z;
+          }
+        } else {
+          this.raycaster.setFromCamera(this.mouse, this.camera);
+          const intersects = this.raycaster.intersectObjects(this.books.map(b => b.children[0]));
+
+          if (intersects.length > 0) {
+            const intersected = intersects[0].object.parent;
+            if (this.previousIntersected !== intersected) {
+              if (this.previousIntersected) {
+                gsap.to(this.previousIntersected.scale, {
+                  x: 1, y: 1, z: 1,
+                  duration: 0.3,
+                  ease: "power2.out"
+                });
+              }
+              gsap.to(intersected.scale, {
+                x: 1.05, y: 1.05, z: 1.05,
+                duration: 0.3,
+                ease: "power2.out"
+              });
+              this.previousIntersected = intersected;
+            }
+          } else {
+            if (this.previousIntersected) {
+              gsap.to(this.previousIntersected.scale, {
+                x: 1, y: 1, z: 1,
+                duration: 0.3,
+                ease: "power2.out"
+              });
+              this.previousIntersected = null;
+            }
+          }
+        }
+      }
+
+      onWheel(event: WheelEvent) {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -0.2 : 0.2;
+        this.camera.position.z += delta;
+        this.camera.position.z = Math.min(Math.max(this.camera.position.z, 2), 8);
+        this.camera.lookAt(0, 1, 0);
+      }
+
+      onKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Escape' || event.key === 'Esc') {
+          if (this.selectedBook && this.isDragging) {
+            gsap.to(this.selectedBook.rotation, {
+              y: this.selectedBook.userData.originalRotation.y,
+              duration: 0.8,
+              ease: "elastic.out(1, 0.3)"
+            });
+
+            gsap.to(this.selectedBook.position, {
+              y: this.selectedBook.userData.originalPosition.y,
+              duration: 0.8,
+              ease: "elastic.out(1, 0.3)"
+            });
+
+            this.selectedBook = null;
+            this.isDragging = false;
+          }
+
+          this.books.forEach(book => {
+            gsap.to(book.rotation, {
+              y: book.userData.originalRotation.y,
+              duration: 0.5,
+              ease: "power2.out"
+            });
+
+            gsap.to(book.position, {
+              y: book.userData.originalPosition.y,
+              duration: 0.5,
+              ease: "power2.out"
+            });
+
+            gsap.to(book.scale, {
+              x: 1, y: 1, z: 1,
+              duration: 0.5,
+              ease: "power2.out"
+            });
+          });
+        }
+      }
+
+      animate() {
+        requestAnimationFrame(this.animate.bind(this));
+
+        this.controls.update();
+
+        const time = performance.now() * 0.001;
+
+        this.books.forEach((book, index) => {
+          if (!book.userData.isDragging && !this.selectedBook) {
+            const sway = Math.sin(time * 0.2 + index) * 0.02;
+            book.rotation.z = sway;
+          }
+        });
+
+        if (this.tornPaper) {
+          this.tornPaper.rotation.x = Math.sin(time * 0.3) * 0.05;
+          this.tornPaper.rotation.z = Math.cos(time * 0.3) * 0.03;
+        }
+
+        this.renderer.render(this.scene, this.camera);
+        this.labelRenderer.render(this.scene, this.camera);
+      }
+    }
+
+    const instance = new AshenPressInstance();
+
+    return () => {
+      // Cleanup
+      window.removeEventListener('resize', instance.onWindowResize.bind(instance));
+      window.removeEventListener('pointerdown', instance.onPointerDown.bind(instance));
+      window.removeEventListener('pointerup', instance.onPointerUp.bind(instance));
+      window.removeEventListener('pointermove', instance.onPointerMove.bind(instance));
+      window.removeEventListener('wheel', instance.onWheel.bind(instance));
+      document.removeEventListener('keydown', instance.onKeyDown.bind(instance));
+
+      rootDiv.remove();
+    };
+  }, []);
+
+  return null;
+}
