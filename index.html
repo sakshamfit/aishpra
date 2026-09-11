@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aishpra - Luxury Jewelry 3D Experience</title>
+    <meta name="description" content="Aishpra - Experience luxury jewelry craftsmanship through immersive 3D visualization">
+
+    <!-- Tailwind CSS via CDN for rapid prototyping -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Custom CSS for 3D canvas */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        .content-section {
+            position: relative;
+            z-index: 10;
+            padding: 4rem;
+            min-height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-text {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.7;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .preview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #8B0000, #CD5C5C);
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 0, 0, 0.3);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .content-section {
+                padding: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Container -->
+    <div id="three-container"></div>
+
+    <!-- Content Sections -->
+    <section class="content-section" id="hero">
+        <div class="hero-text">
+            <h1 class="text-5xl font-bold mb-6">AISHPRA</h1>
+            <p class="text-xl opacity-80">Where Craftsmanship Meets Eternal Beauty</p>
+            <div class="scroll-cue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="ml-2 text-sm">Scroll to Begin</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="the-making">
+        <h2 class="section-title">The Making of the Ring</h2>
+        <p class="section-subtitle">Witness the five-beat journey from raw materials to timeless treasure</p>
+    </section>
+
+    <section class="content-section" id="craftsmanship">
+        <h2 class="section-title">The Story Behind Every Piece</h2>
+        <p class="section-subtitle">Materials, provenance, and the artisan's touch</p>
+    </section>
+
+    <section class="content-section" id="collection">
+        <h2 class="section-title">The Collection</h2>
+        <p class="section-subtitle>Explore our signature ring variants</p>
+        <div class="grid-container" id="collection-grid">
+            <!-- Preview cards will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <section class="content-section" id="cta" style="text-align: center; padding: 6rem 4rem;">
+        <h2 class="section-title">Experience Aishpra</h2>
+        <p class="section-subtitle">Book a private viewing or add to your collection</p>
+        <button class="cta-button">Book Private Appointment</button>
+    </section>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+    <!-- GSAP Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollSmoother.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <!-- GLTF Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/loaders/GLTFLoader.min.js"></script>
+    <!-- EffectComposer for Post-processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/RenderPass.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/BloomPass.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/shaders/FXAAShader.js"></script>
+
+    <script type="module">
+        // Collection data for preview cards
+        const collectionData = [
+            {
+                name: "The Solitaire",
+                price: "$12,500",
+                description: "Classic round brilliant cut in 18k gold",
+                image: "https://images.unsplash.com/photo-1605100784630-ef51e610bb0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHwxfHxyaW5nZWx8ZW58MHx8fHwxNjYwMDkzNjUw&ixlib=rb-1.2.1&q=80&w=400"
+            },
+            {
+                name: "The Halo",
+                price: "$18,750",
+                description: "Center stone surrounded by micropave diamonds",
+                image: "https://images.unsplash.com/photo-1605100783390-91bfb429039e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHwzfHxyaW5nZWx8ZW58MHx8fHwxNjYwMDkzNjUw&ixlib=rb-1.2.1&q=80&w=400"
+            },
+            {
+                name: "The Three-Stone",
+                price: "$22,000",
+                description: "Past, present, future symbolism with tapered baguettes",
+                image: "https://images.unsplash.com/photo-1605100784737-66f2c7c8e457?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHw1fHxyaW5nZWx8ZW58MHx8fHwxNjYwMDkzNjUw&ixlib=rb-1.2.1&q=80&w=400"
+            },
+            {
+                name: "The Vintage",
+                price: "$15,300",
+                description: "Milgrain details and filigree inspired by Art Deco",
+                image: "https://images.unsplash.com/photo-1605100785484-4675255d0ae8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNzY1Nzl8MHwxfHNlYXJjaHw3fHxyaW5nZWx8ZW58MHx8fHwxNjYwMDkzNjUw&ixlib=rb-1.2.1&q=80&w=400"
+            }
+        ];
+
+        // Populate collection grid after DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const collectionGrid = document.getElementById('collection-grid');
+            if (collectionGrid) {
+                collectionData.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'preview-card';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover rounded-md mb-4">
+                        <h3 class="font-bold text-lg mb-2">${item.name}</h3>
+                        <p class="text-sm opacity-75 mb-2">${item.description}</p>
+                        <p class="font-semibold text-xl">${item.price}</p>
+                    `;
+                    collectionGrid.appendChild(card);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
