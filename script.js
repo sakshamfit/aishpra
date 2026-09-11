@@ -6,13 +6,57 @@ import { RenderPass } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r160
 import { BloomPass } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/BloomPass.js';
 import { ShaderPass } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/shaders/FXAAShader.js';
-import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap-core.js';
+import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.js';
 import { ScrollTrigger } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.js';
 import { ScrollSmoother } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollSmoother.js';
 import { MotionPathPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.js';
+import { Draggable } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.js';
+import { DrawSVGPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/DrawSVGPlugin.js';
+import { EaselPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/EaselPlugin.js';
+import { Flip } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.js';
+import { GSDevTools } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/GSDevTools.js';
+import { MotionPathHelper } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathHelper.js';
+import { MorphSVGPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MorphSVGPlugin.js';
+import { Observer } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Observer.js';
+import { Physics2DPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Physics2DPlugin.js';
+import { PhysicsPropsPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/PhysicsPropsPlugin.js';
+import { PixiPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/PixiPlugin.js';
+import { ScrambleTextPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrambleTextPlugin.js';
+import { SplitText } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/SplitText.js';
+import { TextPlugin } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.js';
+import { RoughEase } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/RoughEase.js';
+import { ExpoScaleEase } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/ExpoScaleEase.js';
+import { SlowMo } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/SlowMo.js';
+import { CustomEase } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/CustomEase.js';
+import { CustomBounce } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/CustomBounce.js';
+import { CustomWiggle } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/utils/CustomWiggle.js';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, MotionPathPlugin);
+gsap.registerPlugin(
+  ScrollTrigger,
+  ScrollSmoother,
+  MotionPathPlugin,
+  Draggable,
+  DrawSVGPlugin,
+  EaselPlugin,
+  Flip,
+  GSDevTools,
+  MotionPathHelper,
+  MorphSVGPlugin,
+  Observer,
+  Physics2DPlugin,
+  PhysicsPropsPlugin,
+  PixiPlugin,
+  ScrambleTextPlugin,
+  SplitText,
+  TextPlugin,
+  RoughEase,
+  ExpoScaleEase,
+  SlowMo,
+  CustomEase,
+  CustomBounce,
+  CustomWiggle
+);
 
 class AishpraExperience {
     constructor() {
@@ -122,7 +166,8 @@ class AishpraExperience {
         // Try to load a real GLTF model, fallback to procedural generation
         loader.load(
             // URL would be provided in production - using procedural for now
-            'data:model/gltf-binary;base64,AAABAAIAAQAMAAAAAFRydWlsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////wMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA//8DAAAAAAwAAAAJAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAAA==',
+            'data:model/gltf-binary;base64,AAABAAIAAQAMAAAAAFRydWlsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////wMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA//8DAAAAAAwAAAAJAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQAAAAkAAAACQ==
+            ',
             (gltf) => {
                 this.onModelLoaded(gltf);
             },
